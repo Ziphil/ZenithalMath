@@ -10,7 +10,7 @@ module ZenithalMathCreater
 
   CREATION_METHODS = {
     "row" => :row,
-    "sup" => :superscript, "sub" => :superscript,
+    "sp" => :superscript, "sb" => :superscript,
     "frac" => :fraction, "dfrac" => :fraction,
     "sqrt" => :radical,
     "display" => :style, "inline" => :style
@@ -26,6 +26,18 @@ module ZenithalMathCreater
     "a" => ["\u27E8", "\u27E9"],
     "aa" => ["\u27EA", "\u27EB"]
   }
+  FUNCTIONS = [
+    "sin", "cos", "tan", "cot", "sec", "csc", "sinh", "cosh", "tanh",
+    "log", "ln", "lg", "exp",
+    "inf", "sup", "min", "max",
+    "ker", "im",
+    "lim", "colim",
+    "deg", "dim", "det", "sgn", "arg"
+  ]
+  OPERATORS = {
+    "pm" => "\u00B1",
+    "coloneq" => ":="
+  }
 
   private
 
@@ -34,6 +46,16 @@ module ZenithalMathCreater
     PAREN_PAIRS.each do |match_name, _|
       if name == match_name
         return send("create_paren", name, attributes, children_list)
+      end
+    end
+    FUNCTIONS.each do |match_name|
+      if name == match_name
+        return send("create_function", name, attributes, children_list)
+      end
+    end
+    OPERATORS.each do |match_name, _|
+      if name == match_name
+        return send("create_operator", name, attributes, children_list)
       end
     end
     CREATION_METHODS.each do |match_name, method_name|
@@ -74,7 +96,8 @@ module ZenithalMathCreater
 
   def create_superscript(name, attributes, children_list)
     this = Nodes[]
-    this << Element.build("m#{name}") do |this|
+    element_name = (name == "sp") ? "msup" : "msub"
+    this << Element.build(element_name) do |this|
       this << Element.build("mrow") do |this|
         this << children_list[0]
       end
@@ -87,14 +110,32 @@ module ZenithalMathCreater
 
   def create_paren(name, attributes, children_list)
     this = Nodes[]
-    pair = PAREN_PAIRS[name]
     this << Element.build("mfenced") do |this|
-      this["open"], this["close"] = pair
+      this["open"], this["close"] = PAREN_PAIRS[name]
       children_list.each do |children|
         this << Element.build("mrow") do |this|
           this << children
         end
       end
+    end
+    return this
+  end
+
+  def create_function(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("mi") do |this|
+      this << ~name
+    end
+    this << Element.build("mo") do |this|
+      this << ~"\u2061"
+    end
+    return this
+  end
+
+  def create_operator(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("mo") do |this|
+      this << ~OPERATORS[name]
     end
     return this
   end
