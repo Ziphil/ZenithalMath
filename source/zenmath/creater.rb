@@ -11,8 +11,6 @@ module ZenithalMathCreater
   CREATION_METHODS = {
     "row" => :row,
     "sup" => :superscript, "sub" => :superscript,
-    "p" => :paren, "b" => :paren, "c" => :paren, "v" => :paren, "vv" => :paren,
-    "f" => :paren, "g" => :paren, "a" => :paren, "aa" => :paren,
     "frac" => :fraction, "dfrac" => :fraction,
     "sqrt" => :radical,
     "display" => :style, "inline" => :style
@@ -33,10 +31,14 @@ module ZenithalMathCreater
 
   def create_math_elements(name, attributes, children_list)
     nodes = Nodes[]
+    PAREN_PAIRS.each do |match_name, _|
+      if name == match_name
+        return send("create_paren", name, attributes, children_list)
+      end
+    end
     CREATION_METHODS.each do |match_name, method_name|
       if name == match_name
-        nodes = send("create_#{method_name}", name, attributes, children_list)
-        break
+        return send("create_#{method_name}", name, attributes, children_list)
       end
     end
     return nodes
@@ -87,8 +89,7 @@ module ZenithalMathCreater
     this = Nodes[]
     pair = PAREN_PAIRS[name]
     this << Element.build("mfenced") do |this|
-      this["open"] = pair[0]
-      this["close"] = pair[1]
+      this["open"], this["close"] = pair
       children_list.each do |children|
         this << Element.build("mrow") do |this|
           this << children
