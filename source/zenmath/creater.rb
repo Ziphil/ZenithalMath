@@ -10,9 +10,10 @@ module ZenithalMathCreater
 
   CREATION_METHODS = {
     "row" => :row,
-    "sp" => :superscript, "sb" => :superscript,
+    "sp" => :superscript, "sb" => :superscript, "sbsp" => :bothscript,
     "frac" => :fraction, "dfrac" => :fraction,
     "sqrt" => :radical,
+    "int" => :integral,
     "display" => :style, "inline" => :style
   }
   PAREN_PAIRS = {
@@ -108,6 +109,22 @@ module ZenithalMathCreater
     return this
   end
 
+  def create_bothscript(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("msubsup") do |this|
+      this << Element.build("mrow") do |this|
+        this << children_list[0]
+      end
+      this << Element.build("mrow") do |this|
+        this << children_list[1]
+      end
+      this << Element.build("mrow") do |this|
+        this << children_list[2]
+      end
+    end
+    return this
+  end
+
   def create_paren(name, attributes, children_list)
     this = Nodes[]
     this << Element.build("mfenced") do |this|
@@ -177,6 +194,22 @@ module ZenithalMathCreater
         this << Element.build("mrow") do |this|
           this << children_list[0]
         end
+      end
+    end
+    return this
+  end
+
+  def create_integral(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("msubsup") do |this|
+      this << Element.build("mo") do |this|
+        this << ~"\u222B"
+      end
+      this << Element.build("mrow") do |this|
+        this << children_list[0]
+      end
+      this << Element.build("mrow") do |this|
+        this << children_list[1]
       end
     end
     return this
