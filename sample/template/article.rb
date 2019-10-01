@@ -108,10 +108,6 @@ end
 converter.add(["p"], ["article.section"]) do |element|
   this = Nodes[]
   this << Element.build("fo:block") do |this|
-    this["space-before"] = "2mm"
-    this["space-after"] = "2mm"
-    this.make_elastic("space-before")
-    this.make_elastic("space-after")
     this.justify_text
     this["text-indent"] = "1em"
     this << apply(element, "article.section")
