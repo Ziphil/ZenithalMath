@@ -39,7 +39,7 @@ converter.add(["root"], [""]) do |element|
     this["line-height"] = LINE_HEIGHT
     this["axf:ligature-mode"] = "all"
     this << Element.build("fo:layout-master-set") do |this|
-      this << call(element, "section.page-master")
+      this << call(element, "article.page-master")
     end
     this << apply(element, "")
   end

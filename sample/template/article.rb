@@ -1,41 +1,41 @@
 # coding: utf-8
 
 
-converter.set("section.page-master") do |element|
+converter.set("article.page-master") do |element|
   this = Nodes[]
   this << Element.build_page_master do |this|
-    this["master-name"] = "section.left"
+    this["master-name"] = "article.left"
     this << Element.build_region_body(:left) do |this|
-      this["region-name"] = "section.body"
+      this["region-name"] = "article.body"
     end
     this << Element.build_region_before do |this|
-      this["region-name"] = "section.left-header"
+      this["region-name"] = "article.left-header"
     end
     this << Element.build_region_after do |this|
-      this["region-name"] = "section.left-footer"
+      this["region-name"] = "article.left-footer"
     end
   end
   this << Element.build_page_master do |this|
-    this["master-name"] = "section.right"
+    this["master-name"] = "article.right"
     this << Element.build_region_body(:right) do |this|
-      this["region-name"] = "section.body"
+      this["region-name"] = "article.body"
     end
     this << Element.build_region_before do |this|
-      this["region-name"] = "section.right-header"
+      this["region-name"] = "article.right-header"
     end
     this << Element.build_region_after do |this|
-      this["region-name"] = "section.right-footer"
+      this["region-name"] = "article.right-footer"
     end
   end
   this << Element.build("fo:page-sequence-master") do |this|
-    this["master-name"] = "section"
+    this["master-name"] = "article"
     this << Element.build("fo:repeatable-page-master-alternatives") do |this|
       this << Element.build("fo:conditional-page-master-reference") do |this|
-        this["master-reference"] = "section.left"
+        this["master-reference"] = "article.left"
         this["odd-or-even"] = "even"
       end
       this << Element.build("fo:conditional-page-master-reference") do |this|
-        this["master-reference"] = "section.right"
+        this["master-reference"] = "article.right"
         this["odd-or-even"] = "odd"
       end
     end
@@ -43,34 +43,46 @@ converter.set("section.page-master") do |element|
   next this
 end
 
-converter.add(["section"], [""]) do |element|
+converter.add(["article"], [""]) do |element|
   this = Nodes[]
   this << Element.build("fo:page-sequence") do |this|
-    this["master-reference"] = "section"
+    this["master-reference"] = "article"
     this["initial-page-number"] = "auto-even"
     this << Element.build("fo:static-content") do |this|
-      this["flow-name"] = "section.left-header"
+      this["flow-name"] = "article.left-header"
     end
     this << Element.build("fo:static-content") do |this|
-      this["flow-name"] = "section.right-header"
+      this["flow-name"] = "article.right-header"
     end
     this << Element.build("fo:static-content") do |this|
-      this["flow-name"] = "section.left-footer"
+      this["flow-name"] = "article.left-footer"
     end
     this << Element.build("fo:static-content") do |this|
-      this["flow-name"] = "section.right-footer"
+      this["flow-name"] = "article.right-footer"
     end
     this << Element.build("fo:flow") do |this|
-      this["flow-name"] = "section.body"
+      this["flow-name"] = "article.body"
       this << Element.build("fo:block-container") do |this|
-        this << apply(element, "section")
+        this << apply(element, "article")
       end
     end
   end
   next this
 end
 
-converter.add(["h"], ["section"]) do |element|
+converter.add(["section"], ["article"]) do |element|
+  this = Nodes[]
+  this << Element.build("fo:block") do |this|
+    this["space-before"] = "5mm"
+    this["space-after"] = "3mm"
+    this.make_elastic("space-before")
+    this.make_elastic("space-after")
+    this << apply(element, "article.section")
+  end
+  next this
+end
+
+converter.add(["h"], ["article.section"]) do |element|
   this = Nodes[]
   number = element.each_xpath("../preceding::section").to_a.size + 1
   this << Element.build("fo:block") do |this|
@@ -87,13 +99,13 @@ converter.add(["h"], ["section"]) do |element|
         this["margin-right"] = "0.5em"
         this << ~"#{number}."
       end
-      this << apply(element, "section")
+      this << apply(element, "article.section")
     end
   end
   next this
 end
 
-converter.add(["p"], ["section"]) do |element|
+converter.add(["p"], ["article.section"]) do |element|
   this = Nodes[]
   this << Element.build("fo:block") do |this|
     this["space-before"] = "2mm"
@@ -102,23 +114,23 @@ converter.add(["p"], ["section"]) do |element|
     this.make_elastic("space-after")
     this.justify_text
     this["text-indent"] = "1em"
-    this << apply(element, "section")
+    this << apply(element, "article.section")
   end
   next this
 end
 
-converter.add([//], ["section"]) do |element|
+converter.add([//], ["article.section"]) do |element|
   this = Nodes[]
   this << Element.build(element.expanded_name) do |this|
     element.attributes.each_attribute do |attribute|
       this[attribute.name] = attribute.to_s
     end
-    this << apply(element, "section")
+    this << apply(element, "article.section")
   end
   next this
 end
 
-converter.add(nil, ["section"]) do |text|
+converter.add(nil, ["article.section"]) do |text|
   this = Nodes[]
   this << ~text.to_s.gsub(/(?<=。)\s*\n\s*/, "")
   next this
