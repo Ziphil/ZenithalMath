@@ -9,8 +9,21 @@ include REXML
 module ZenithalMathCreater
 
   CREATION_METHODS = {
-    "sup" => :sup, "sub" => :sup,
-    "row" => :row
+    "row" => :row,
+    "sup" => :superscript, "sub" => :superscript,
+    "p" => :paren, "b" => :paren, "c" => :paren, "v" => :paren, "vv" => :paren,
+    "f" => :paren, "g" => :paren, "a" => :paren, "aa" => :paren
+  }
+  PAREN_PAIRS = {
+    "p" => ["(", ")"],
+    "b" => ["[", "]"],
+    "c" => ["{", "}"],
+    "v" => ["|", "|"],
+    "vv" => ["||", "||"],
+    "f" => ["\u230A", "\u230B"],
+    "g" => ["\u2308", "\u2309"],
+    "a" => ["\u27E8", "\u27E9"],
+    "aa" => ["\u27EA", "\u27EB"]
   }
 
   private
@@ -46,7 +59,15 @@ module ZenithalMathCreater
     return this
   end
 
-  def create_sup(name, attributes, children_list)
+  def create_row(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("mrow") do |this|
+      this << children_list.first
+    end
+    return this
+  end
+
+  def create_superscript(name, attributes, children_list)
     this = Nodes[]
     this << Element.build("m#{name}") do |this|
       this << Element.build("mrow") do |this|
@@ -59,10 +80,17 @@ module ZenithalMathCreater
     return this
   end
 
-  def create_row(name, attributes, children_list)
+  def create_paren(name, attributes, children_list)
     this = Nodes[]
-    this << Element.build("mrow") do |this|
-      this << children_list.first
+    pair = PAREN_PAIRS[name]
+    this << Element.build("mfenced") do |this|
+      this["open"] = pair[0]
+      this["close"] = pair[1]
+      children_list.each do |children|
+        this << Element.build("mrow") do |this|
+          this << children
+        end
+      end
     end
     return this
   end
