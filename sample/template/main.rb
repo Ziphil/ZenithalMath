@@ -36,7 +36,7 @@ converter.add(["root"], [""]) do |element|
     this["xml:lang"] = "ja"
     this["font-family"] = FONT_FAMILY
     this["font-size"] = FONT_SIZE
-    this["line-height"] = "1"
+    this["line-height"] = LINE_HEIGHT
     this["axf:ligature-mode"] = "all"
     this << Element.build("fo:layout-master-set") do |this|
       this << call(element, "section.page-master")

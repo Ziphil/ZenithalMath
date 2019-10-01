@@ -70,11 +70,38 @@ converter.add(["section"], [""]) do |element|
   next this
 end
 
+converter.add(["h"], ["section"]) do |element|
+  this = Nodes[]
+  number = element.each_xpath("../preceding::section").to_a.size + 1
+  this << Element.build("fo:block") do |this|
+    this["space-before"] = "3mm"
+    this["space-after"] = "3mm"
+    this.make_elastic("space-before")
+    this.make_elastic("space-after")
+    this["font-size"] = "1.5em"
+    this.justify_text
+    this << Element.build("fo:inline") do |this|
+      this["font-family"] = SANS_FONT_FAMILY
+      this["font-size"] = SANS_FONT_SIZE
+      this << Element.build("fo:inline") do |this|
+        this["margin-right"] = "0.5em"
+        this << ~"#{number}."
+      end
+      this << apply(element, "section")
+    end
+  end
+  next this
+end
+
 converter.add(["p"], ["section"]) do |element|
   this = Nodes[]
   this << Element.build("fo:block") do |this|
-    this["line-height"] = LINE_HEIGHT
+    this["space-before"] = "2mm"
+    this["space-after"] = "2mm"
+    this.make_elastic("space-before")
+    this.make_elastic("space-after")
     this.justify_text
+    this["text-indent"] = "1em"
     this << apply(element, "section")
   end
   next this
