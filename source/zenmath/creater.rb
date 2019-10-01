@@ -12,7 +12,10 @@ module ZenithalMathCreater
     "row" => :row,
     "sup" => :superscript, "sub" => :superscript,
     "p" => :paren, "b" => :paren, "c" => :paren, "v" => :paren, "vv" => :paren,
-    "f" => :paren, "g" => :paren, "a" => :paren, "aa" => :paren
+    "f" => :paren, "g" => :paren, "a" => :paren, "aa" => :paren,
+    "frac" => :fraction, "dfrac" => :fraction,
+    "sqrt" => :radical,
+    "display" => :style, "inline" => :style
   }
   PAREN_PAIRS = {
     "p" => ["(", ")"],
@@ -91,6 +94,57 @@ module ZenithalMathCreater
           this << children
         end
       end
+    end
+    return this
+  end
+
+  def create_fraction(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("mfrac") do |this|
+      this << Element.build("mrow") do |this|
+        this << children_list[0]
+      end
+      this << Element.build("mrow") do |this|
+        this << children_list[1]
+      end
+    end
+    if name == "dfrac"
+      next_this = Nodes[]
+      next_this << Element.build("mstyle") do |next_this|
+        next_this["displaystyle"] = "true"
+        next_this << this
+      end
+      this = next_this
+    end
+    return this
+  end
+
+  def create_radical(name, attributes, children_list)
+    this = Nodes[]
+    if children_list.size == 1
+      this << Element.build("msqrt") do |this|
+        this << Element.build("mrow") do |this|
+          this << children_list.first
+        end
+      end
+    else
+      this << Element.build("mroot") do |this|
+        this << Element.build("mrow") do |this|
+          this << children_list[1]
+        end
+        this << Element.build("mrow") do |this|
+          this << children_list[0]
+        end
+      end
+    end
+    return this
+  end
+
+  def create_style(name, attributes, children_list)
+    this = Nodes[]
+    this << Element.build("mstyle") do |this|
+      this["displaystyle"] = (name == "display") ? "true" : "false"
+      this << children_list.first
     end
     return this
   end
