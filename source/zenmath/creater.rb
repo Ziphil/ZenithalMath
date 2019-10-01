@@ -51,7 +51,7 @@ module ZenithalMathCreater
         this << Element.build("mn") do |this|
           this << ~char
         end
-      elsif char =~ /\w/
+      elsif char =~ /[[:alpha:]]/
         this << Element.build("mi") do |this|
           this << ~char
         end
