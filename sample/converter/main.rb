@@ -21,7 +21,7 @@ class WholeBookConverter
   MANUSCRIPT_DIR = "sample/manuscript"
   MACRO_DIR = "sample/macro"
   TEMPLATE_DIR = "sample/template"
-  TYPESET_COMMAND = "cd sample/out & AHFCmd -pgbar -x 3 -d main.fo -p @PDF -o document.pdf 2> error.txt"
+  TYPESET_COMMAND = "cd sample/out & AHFCmd -pgbar -x 3 -d main.fo -p @PDF -o document.pdf -i ../converter/config.xml 2> error.txt"
   OPEN_COMMANDS = {
     :sumatra => "SumatraPDF -reuse-instance sample/out/document.pdf",
     :formatter => "AHFormatter -s -d sample/out/main.fo"
