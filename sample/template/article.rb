@@ -115,6 +115,29 @@ converter.add(["p"], ["article.section"]) do |element|
   next this
 end
 
+converter.add(["inline-math"], ["article.section"]) do |element|
+  this = Nodes[]
+  this << Element.build("fo:instream-foreign-object") do |this|
+    this << apply(element, "article.section")
+  end
+  next this
+end
+
+converter.add(["block-math"], ["article.section"]) do |element|
+  this = Nodes[]
+  this << Element.build("fo:block") do |this|
+    this["space-before"] = "2mm"
+    this["space-after"] = "2mm"
+    this.make_elastic("space-before")
+    this.make_elastic("space-after")
+    this["text-align"] = "center"
+    this << Element.build("fo:instream-foreign-object") do |this|
+      this << apply(element, "article.section")
+    end
+  end
+  next this
+end
+
 converter.add([//], ["article.section"]) do |element|
   this = Nodes[]
   this << Element.build(element.expanded_name) do |this|
