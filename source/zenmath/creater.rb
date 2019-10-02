@@ -27,6 +27,10 @@ module ZenithalMathCreater
     "a" => ["\u27E8", "\u27E9"],
     "aa" => ["\u27EA", "\u27EB"]
   }
+  INTEGRALS = {
+    "int" => "\u222B",
+    "oint" => "\u222E"
+  }
   FUNCTIONS = [
     "sin", "cos", "tan", "cot", "sec", "csc", "sinh", "cosh", "tanh",
     "log", "ln", "lg", "exp",
@@ -43,27 +47,20 @@ module ZenithalMathCreater
   private
 
   def create_math_element(name, attributes, children_list)
-    PAREN_PAIRS.each do |match_name, _|
-      if name == match_name
-        return send("create_paren", name, attributes, children_list)
-      end
+    nodes = Nodes[]
+    if PAREN_PAIRS.key?(name)
+      nodes = send("create_paren", name, attributes, children_list)
+    elsif INTEGRALS.key?(name)
+      nodes = send("create_integral", name, attributes, children_list)
+    elsif FUNCTIONS.include?(name)
+      nodes = send("create_function", name, attributes, children_list)
+    elsif OPERATORS.key?(name)
+      nodes = send("create_operator", name, attributes, children_list)
+    elsif CREATION_METHODS.key?(name)
+      method_name = CREATION_METHODS[name]
+      nodes = send("create_#{method_name}", name, attributes, children_list)
     end
-    FUNCTIONS.each do |match_name|
-      if name == match_name
-        return send("create_function", name, attributes, children_list)
-      end
-    end
-    OPERATORS.each do |match_name, _|
-      if name == match_name
-        return send("create_operator", name, attributes, children_list)
-      end
-    end
-    CREATION_METHODS.each do |match_name, method_name|
-      if name == match_name
-        return send("create_#{method_name}", name, attributes, children_list)
-      end
-    end
-    return Nodes[]
+    return nodes
   end
 
   def create_math_text(text)
@@ -202,13 +199,15 @@ module ZenithalMathCreater
     this = Nodes[]
     this << Element.build("msubsup") do |this|
       this << Element.build("mo") do |this|
-        this << ~"\u222B"
+        this << ~INTEGRALS[name]
       end
-      this << Element.build("mrow") do |this|
-        this << children_list[0]
-      end
-      this << Element.build("mrow") do |this|
-        this << children_list[1]
+      if children_list.size >= 2
+        this << Element.build("mrow") do |this|
+          this << children_list[0]
+        end
+        this << Element.build("mrow") do |this|
+          this << children_list[1]
+        end
       end
     end
     return this
