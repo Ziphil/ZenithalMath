@@ -42,8 +42,7 @@ module ZenithalMathCreater
 
   private
 
-  def create_math_elements(name, attributes, children_list)
-    nodes = Nodes[]
+  def create_math_element(name, attributes, children_list)
     PAREN_PAIRS.each do |match_name, _|
       if name == match_name
         return send("create_paren", name, attributes, children_list)
@@ -64,7 +63,7 @@ module ZenithalMathCreater
         return send("create_#{method_name}", name, attributes, children_list)
       end
     end
-    return nodes
+    return Nodes[]
   end
 
   def create_math_text(text)

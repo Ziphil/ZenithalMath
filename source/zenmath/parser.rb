@@ -13,69 +13,18 @@ module ZenithalMathParserMethod
 
   private
 
-  def parse_element
-    parser = Parser.build(self) do
-      start_char = +parse_char_any([ELEMENT_START, MACRO_START])
-      name = +parse_identifier
-      marks = +parse_marks
-      attributes = +parse_attributes.maybe || {}
-      math_macro = start_char == MACRO_START && @math_macro_names.include?(name)
-      if math_macro
-        @math_level += 1
-      end
-      children_list = +parse_children_list(marks.include?(:verbal))
-      if math_macro
-        @math_level -= 1
-      end
-      if name == SYSTEM_INSTRUCTION_NAME
-        +parse_space
-      end
-      if start_char == MACRO_START
-        marks.push(:macro)
-      end
-      if math_macro
-        next process_math_macro(name, attributes, children_list)
-      elsif @math_level > 0
-        next create_math_elements(name, attributes, children_list)
-      else
-        next create_nodes(name, marks, attributes, children_list)
-      end
+  def determine_options(name, marks, attributes, macro, options)
+    if macro && @math_macro_names.include?(name)
+      options = options.clone
+      options[:math] = true
+      return options
+    else
+      return super
     end
-    return parser
   end
 
-  def parse_special_element(kind)
-    parser = Parser.build(self) do
-      unless @math_level > 0 || @special_element_names[kind]
-        +parse_none
-      end
-      +parse_char(SPECIAL_ELEMENT_STARTS[kind])
-      children = +parse_nodes(false)
-      +parse_char(SPECIAL_ELEMENT_ENDS[kind])
-      if @math_level > 0
-        next create_math_elements("row", {}, [children])
-      else
-        next create_nodes(@special_element_names[kind], [], {}, [children])
-      end
-    end
-    return parser
-  end
-
-  def parse_text(verbal)
-    parser = Parser.build(self) do
-      texts = +(parse_text_plain(verbal) | parse_escape).many(1)
-      if @math_level > 0
-        next create_math_text(texts.join)
-      else
-        next Text.new(texts.join, true, nil, false)
-      end
-    end
-    return parser
-  end
-
-  def process_math_macro(name, attributes, children_list)
-    elements = Nodes[]
-    if @macros.key?(name)
+  def process_macro(name, marks, attributes, children_list, options)
+    if @math_macro_names.include?(name)
       next_children_list = children_list.map do |children|
         element = Element.build("math") do |element|
           element["xmlns"] = "http://www.w3.org/1998/Math/MathML"
@@ -83,14 +32,36 @@ module ZenithalMathParserMethod
         end
         next element
       end
-      raw_elements = @macros[name].call(attributes, next_children_list)
-      raw_elements.each do |raw_element|
-        elements << raw_element
-      end
+      raw_nodes = @macros[name].call(attributes, next_children_list)
+      nodes = raw_nodes.inject(Nodes[], :<<)
+      return nodes
     else
-      throw(:error, error_message("No such macro"))
+      return super
     end
-    return elements
+  end
+
+  def create_element(name, marks, attributes, children_list, options)
+    if options[:math]
+      return create_math_element(name, attributes, children_list)
+    else
+      return super
+    end
+  end
+
+  def create_special_element(kind, children, options)
+    if options[:math]
+      return create_math_elements("row", {}, [children])
+    else
+      return super
+    end
+  end
+
+  def create_text(raw_text, options)
+    if options[:math]
+      return create_math_text(raw_text)
+    else
+      return super
+    end
   end
 
 end
