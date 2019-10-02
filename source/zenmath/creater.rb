@@ -43,6 +43,12 @@ module ZenithalMathCreater
     "pm" => "\u00B1",
     "coloneq" => ":="
   }
+  GREEKS = {
+    "a" => "α", "b" => "β", "c" => "ψ", "d" => "δ", "e" => "ε", "f" => "φ", "g" => "γ", "h" => "η", "i" => "ι", "j" => "ξ", "k" => "κ", "l" => "λ", "m" => "μ", 
+    "n" => "ν", "o" => "ο", "p" => "π", "q" => "ϕ", "r" => "ρ", "s" => "σ", "t" => "τ", "u" => "θ", "v" => "ω", "w" => "ς", "x" => "χ", "y" => "υ", "z" => "ζ",
+    "A" => "Α", "B" => "Β", "C" => "Ψ", "D" => "Δ", "E" => "Ε", "F" => "Φ", "G" => "Γ", "H" => "Η", "I" => "Ι", "J" => "Ξ", "K" => "Κ", "L" => "Λ", "M" => "Μ", 
+    "N" => "Ν", "O" => "Ο", "P" => "Π", "Q" => "Φ", "R" => "Ρ", "S" => "Σ", "T" => "Τ", "U" => "Θ", "V" => "Ω", "W" => "Σ", "X" => "Χ", "Y" => "Υ", "Z" => "Ζ"
+  }
 
   private
 
@@ -81,6 +87,14 @@ module ZenithalMathCreater
       end
     end
     return this
+  end
+
+  def create_math_escape(char)
+    next_char = char
+    if GREEKS.key?(char)
+      next_char = GREEKS[char]
+    end
+    return next_char
   end
 
   def create_row(name, attributes, children_list)

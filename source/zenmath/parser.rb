@@ -64,6 +64,14 @@ module ZenithalMathParserMethod
     end
   end
 
+  def create_escape(place, char, options)
+    if options[:math] && place == :text
+      return create_math_escape(char)
+    else
+      return super
+    end
+  end
+
 end
 
 
