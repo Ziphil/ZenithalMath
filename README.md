@@ -18,6 +18,10 @@ RubyGems からインストールできるようになる予定です。
 gem install zenmath
 ```
 
+## 構文
+
+- [構文](document/element.md)
+
 ## 使い方
 `ZenithalMathParser` インスタンスを作成します。
 `register_math_macro` メソッドを使うことで、引数の内容が ZenMath で書かれるマクロを登録することができます。
