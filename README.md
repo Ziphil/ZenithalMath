@@ -49,6 +49,6 @@ end
 \xml?|version="1.0",encoding="UTF-8"|>
 \root<
   ## 登録した &math マクロ内に ZenMath が書ける
-  2 次方程式 &math<a \sup<x><2> + bx + c = 0> は &math<\sup<b><2> - 4ac = 0> のとき重解をもち･･･。
+  2 次方程式 &math<a \sp<x><2> + bx + c = 0> は &math<\sp<b><2> - 4ac = 0> のとき重解をもち･･･。
 >
 ```
