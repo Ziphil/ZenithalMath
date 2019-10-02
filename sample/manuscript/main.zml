@@ -17,11 +17,14 @@
       \p<
         定積分の計算練習をしましょう。
         &mb<
-          \int<0><1> \sqrt<1 + \frac<1><\sp<x><2>>> dx
-          = \sbsp<\b<\log> \frac<\sqrt<1 + \sp<x><2>> - 1><x> + \sqrt<1 + \sp<x><2>>>><0><1>
-          = \sqrt<2> - 1
+          \int> \sqrt<1 + \frac<1><\sp<x><2>>> dx = \log> \frac<\sqrt<1 + \sp<x><2>> - 1><x> + \sqrt<1 + \sp<x><2>> + C
         >
-        これ合ってる?
+        ここで、&m<C> は積分定数である。
+        また、Cauchy の積分公式
+        &mb<
+          f \p<z> = \frac<1><2 `p i> \oint<C><> \frac<f \p<`z>><`z - z> d `z
+        >
+        を思い出せ。
       >
     >
 
@@ -45,7 +48,7 @@
       >
       \p<
         関数類。
-        &m<\sin> θ \cos> 2 θ>, &m<\log> (x + y) = \log> x + \log> y>。
+        &m<\sin> `u \cos> 2 `u>, &m<\log> (x + y) = \log> x + \log> y>。
       >
     >
 
