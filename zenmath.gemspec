@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   end_string
   spec.required_ruby_version = ">= 2.5"
   
-  spec.add_runtime_dependency("zenml", ">= 1.1.1")
+  spec.add_runtime_dependency("zenml", ">= 1.1.2")
 
   spec.files = Dir.glob("source/**/*.rb")
   spec.require_paths = ["source"]
