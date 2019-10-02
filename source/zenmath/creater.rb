@@ -199,10 +199,10 @@ module ZenithalMathCreater
     else
       this << Element.build("mroot") do |this|
         this << Element.build("mrow") do |this|
-          this << children_list[1]
+          this << children_list[0]
         end
         this << Element.build("mrow") do |this|
-          this << children_list[0]
+          this << children_list[1]
         end
       end
     end
